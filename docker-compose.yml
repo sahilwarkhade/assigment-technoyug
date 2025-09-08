@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # The Node.js application service
+  app:
+    build: .
+    container_name: technoyug-api
+    ports:
+      - "5000:5000"
+    environment:
+      # Use the .env file for environment variables
+      - MONGO_URI=mongodb://mongo:27017/technoyugDB
+      - PORT=${PORT}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_ACCESS_EXPIRES_IN=${JWT_ACCESS_EXPIRES_IN}
+      - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN}
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app # Mounts the current directory to /app in the container for live updates
+      - /app/node_modules # Prevents local node_modules from overwriting container's
+
+  # The MongoDB database service
+  mongo:
+    image: mongo:latest
+    container_name: technoyug-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
